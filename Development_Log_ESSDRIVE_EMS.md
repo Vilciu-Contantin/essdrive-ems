@@ -61,8 +61,8 @@ Construim nucleul EMS care poate primi:
 | EMS-002 | Energy Data Model | ✅ DONE |
 | EMS-003 | PV Simulator | ✅ DONE |
 | EMS-004 | Load Simulator | ✅ DONE |
-| EMS-005 | Battery + SOC | ⏳ NEXT |
-| EMS-006 | Price Model | ⬜ TODO |
+| EMS-005 | Battery + SOC | ✅ DONE |
+| EMS-006 | Price Model | ⏳ NEXT |
 | EMS-007 | Energy Flow Engine | ⬜ TODO |
 | EMS-008 | Grid Import / Export | ⬜ TODO |
 | EMS-009 | Battery Optimizer | ⬜ TODO |
