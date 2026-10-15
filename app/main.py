@@ -3,6 +3,7 @@ from app.core.config import settings
 from app.energy.pv_simulator import PVSimulator
 from app.energy.load_simulator import LoadSimulator
 from app.energy.battery import Battery
+from app.energy.price_model import PriceSimulator
 
 
 app = FastAPI(
@@ -66,6 +67,7 @@ def simulate_load(
         "data": data,
     }
 
+
 @app.get("/api/v1/energy/battery/test")
 def test_battery():
     battery = Battery(
@@ -83,14 +85,12 @@ def test_battery():
         power_kw=60.0,
         duration_hours=0.25,
     )
-
     soc_after_charge = battery.soc_percent
 
     discharged_energy = battery.discharge(
         power_kw=60.0,
         duration_hours=0.25,
     )
-
     soc_after_discharge = battery.soc_percent
 
     return {
@@ -98,22 +98,28 @@ def test_battery():
         "capacity_kwh": battery.capacity_kwh,
         "initial_soc_percent": 50.0,
         "initial_energy_kwh": round(initial_energy, 3),
-        "charge_power_kw": 60.0,
-        "charge_duration_minutes": 15,
         "charged_energy_kwh": charged_energy,
-        "soc_after_charge_percent": round(
-            soc_after_charge,
-            3,
-        ),
-        "discharge_power_kw": 60.0,
-        "discharge_duration_minutes": 15,
+        "soc_after_charge_percent": round(soc_after_charge, 3),
         "discharged_energy_kwh": discharged_energy,
-        "soc_after_discharge_percent": round(
-            soc_after_discharge,
-            3,
-        ),
-        "final_energy_kwh": round(
-            battery.energy_kwh,
-            3,
-        ),
+        "soc_after_discharge_percent": round(soc_after_discharge, 3),
+        "final_energy_kwh": round(battery.energy_kwh, 3),
+    }
+
+
+@app.get("/api/v1/energy/prices/simulate")
+def simulate_prices(base_price_ron_mwh: float = 500.0):
+    simulator = PriceSimulator(
+        base_price_ron_mwh=base_price_ron_mwh
+    )
+
+    data = simulator.generate_day()
+
+    return {
+        "device": "PRICE_SIMULATOR",
+        "base_price_ron_mwh": base_price_ron_mwh,
+        "currency": "RON",
+        "unit": "RON/MWh",
+        "interval_minutes": 15,
+        "intervals": len(data),
+        "data": data,
     }
